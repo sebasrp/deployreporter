@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	deployreporter "github.com/sebasrp/deployreporter"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -17,6 +19,11 @@ var get = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		grafanaKey := viper.GetString("grafanaKey")
 
-		deployreporter.GetDeployments(grafanaKey)
+		deployments := deployreporter.GetDeployments(grafanaKey)
+		if viper.GetBool("verbose") {
+			for _, d := range deployments {
+				fmt.Printf("%+v\n", d)
+			}
+		}
 	},
 }

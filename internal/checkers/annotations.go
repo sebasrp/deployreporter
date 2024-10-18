@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"slices"
+	"strings"
 )
 
 type Annotation struct {
@@ -29,23 +31,49 @@ type Annotation struct {
 	} `json:"data"`
 }
 
-func GetAnnotations(grafanaKey string) {
+func GetDeploymentAnnotations(grafanaKey string) (ret []Annotation) {
 	// see https://grafana.com/docs/grafana/latest/developers/http_api/annotations/
+	var annotations []Annotation
 
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", "http://deliveryhero.grafana.net/api/annotations", nil)
-	fmt.Printf("grafana key: %s", grafanaKey)
 
 	req.Header.Set("Authorization", "Bearer "+grafanaKey)
 	res, _ := client.Do(req)
 	if res.StatusCode == http.StatusOK {
-		var annotations []Annotation
 		err := json.NewDecoder(res.Body).Decode(&annotations)
 		if err != nil {
 			fmt.Printf("error retrieving annotations. %v", err)
 		}
-		for _, a := range annotations {
-			fmt.Printf("%+v\n", a)
+	}
+	var mortyAnnotations []Annotation
+	for _, annotation := range annotations {
+		if slices.Contains(annotation.Tags, "tool:morty") {
+			mortyAnnotations = append(mortyAnnotations, annotation)
 		}
 	}
+	return mortyAnnotations
+}
+
+func GenerateMapFromTags(tags []string) (ret map[string]string) {
+	result := make(map[string]string)
+
+	for _, item := range tags {
+		key, value, err := extractTagInfo(item)
+		if err != nil {
+			fmt.Printf("error extracting tag: %v", err)
+		}
+		result[key] = value
+	}
+	return result
+}
+
+func extractTagInfo(tag string) (string, string, error) {
+	parts := strings.SplitN(tag, ":", 2)
+	if len(parts) != 2 {
+		return "", "", fmt.Errorf("input string must contain exactly one semicolon. tag: %v", tag)
+	}
+	key := strings.TrimSpace(parts[0])
+	value := strings.TrimSpace(parts[1])
+	return key, value, nil
 }
