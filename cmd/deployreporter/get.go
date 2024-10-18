@@ -23,8 +23,10 @@ var get = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		grafanaKey := viper.GetString("grafanaKey")
 		csvFlag := viper.GetBool("csv")
+		from := viper.GetString("from")
+		to := viper.GetString("to")
 
-		deployments := deployreporter.GetDeployments(grafanaKey)
+		deployments := deployreporter.GetDeployments(from, to, grafanaKey)
 		if viper.GetBool("verbose") {
 			for _, d := range deployments {
 				fmt.Printf("%+v\n", d)
@@ -38,9 +40,9 @@ var get = &cobra.Command{
 			}
 			csvwriter := csv.NewWriter(csvfile)
 
-			_ = csvwriter.Write([]string{"id", "start", "end", "service", "environment", "country", "tool"})
+			_ = csvwriter.Write([]string{"id", "start", "end", "service", "environment", "country", "source"})
 			for _, d := range deployments {
-				row := []string{strconv.Itoa(d.ID), time.Unix(d.Start/1000, 0).UTC().String(), time.Unix(d.End/1000, 0).UTC().String(), d.Service, d.Environment, d.Country, d.Tool}
+				row := []string{strconv.Itoa(d.ID), time.Unix(d.Start/1000, 0).UTC().String(), time.Unix(d.End/1000, 0).UTC().String(), d.Service, d.Environment, d.Country, d.Source}
 				_ = csvwriter.Write(row)
 			}
 			csvwriter.Flush()

@@ -11,7 +11,7 @@ type Deployment struct {
 	Service     string
 	Environment string
 	Country     string
-	Tool        string
+	Source      string
 }
 
 func NewDeployment(annotation checkers.Annotation) Deployment {
@@ -23,14 +23,14 @@ func NewDeployment(annotation checkers.Annotation) Deployment {
 		Service:     tags["service"],
 		Environment: tags["dh_env"],
 		Country:     tags["location"],
-		Tool:        tags["tool"],
+		Source:      tags["tool"],
 	}
 	return c
 }
 
-func GetDeployments(grafanaKey string) (ret []Deployment) {
+func GetDeployments(from string, to string, grafanaKey string) (ret []Deployment) {
 	var deployments []Deployment
-	annotations := checkers.GetDeploymentAnnotations(grafanaKey)
+	annotations := checkers.GetDeploymentAnnotations(from, to, grafanaKey)
 	for _, a := range annotations {
 		deployments = append(deployments, NewDeployment(a))
 	}

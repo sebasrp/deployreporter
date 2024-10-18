@@ -10,6 +10,8 @@ import (
 
 var (
 	// Used for flags.
+	from       string
+	to         string
 	cfgFile    string
 	console    bool
 	csvFlag    bool
@@ -38,13 +40,23 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
+	rootCmd.PersistentFlags().StringVar(&from, "from", "", "epoch datetime in milliseconds")
+	rootCmd.PersistentFlags().StringVar(&to, "to", "", "epoch datetime in milliseconds")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.deployreporter.yaml)")
 	rootCmd.PersistentFlags().BoolVar(&console, "console", false, "output results to console")
 	rootCmd.PersistentFlags().BoolVar(&csvFlag, "csv", false, "output results to a csv file")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "enables verbose output")
 	rootCmd.PersistentFlags().StringVar(&grafanaKey, "grafanaKey", "", "API key used to retrieve data from grafana")
 
-	err := viper.BindPFlag("console", rootCmd.PersistentFlags().Lookup("console"))
+	err := viper.BindPFlag("from", rootCmd.PersistentFlags().Lookup("from"))
+	if err != nil {
+		fmt.Printf("error binding 'from' flag. %v", err)
+	}
+	err = viper.BindPFlag("to", rootCmd.PersistentFlags().Lookup("to"))
+	if err != nil {
+		fmt.Printf("error binding 'to' flag. %v", err)
+	}
+	err = viper.BindPFlag("console", rootCmd.PersistentFlags().Lookup("console"))
 	if err != nil {
 		fmt.Printf("error binding 'console' flag. %v", err)
 	}
