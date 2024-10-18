@@ -1,7 +1,11 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
+	"os"
+	"strconv"
+	"time"
 
 	deployreporter "github.com/sebasrp/deployreporter"
 	"github.com/spf13/cobra"
@@ -18,12 +22,29 @@ var get = &cobra.Command{
 	Long:  `Retrieves deployments`,
 	Run: func(cmd *cobra.Command, args []string) {
 		grafanaKey := viper.GetString("grafanaKey")
+		csvFlag := viper.GetBool("csv")
 
 		deployments := deployreporter.GetDeployments(grafanaKey)
 		if viper.GetBool("verbose") {
 			for _, d := range deployments {
 				fmt.Printf("%+v\n", d)
 			}
+		}
+
+		if csvFlag {
+			csvfile, err := os.Create("deploychecker.csv")
+			if err != nil {
+				fmt.Printf("failed creating file: %s", err)
+			}
+			csvwriter := csv.NewWriter(csvfile)
+
+			_ = csvwriter.Write([]string{"id", "start", "end", "service", "environment", "country", "tool"})
+			for _, d := range deployments {
+				row := []string{strconv.Itoa(d.ID), time.Unix(d.Start/1000, 0).UTC().String(), time.Unix(d.End/1000, 0).UTC().String(), d.Service, d.Environment, d.Country, d.Tool}
+				_ = csvwriter.Write(row)
+			}
+			csvwriter.Flush()
+			csvfile.Close()
 		}
 	},
 }

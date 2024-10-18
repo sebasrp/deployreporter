@@ -6,7 +6,7 @@ import (
 
 type Deployment struct {
 	ID          int
-	Start       int64 // epoch
+	Start       int64
 	End         int64
 	Service     string
 	Environment string
