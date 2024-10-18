@@ -36,7 +36,7 @@ func GetDeploymentAnnotations(grafanaKey string) (ret []Annotation) {
 	var annotations []Annotation
 
 	client := &http.Client{}
-	req, _ := http.NewRequest("GET", "http://deliveryhero.grafana.net/api/annotations", nil)
+	req, _ := http.NewRequest("GET", "http://deliveryhero.grafana.net/api/annotations?limit=2000", nil)
 
 	req.Header.Set("Authorization", "Bearer "+grafanaKey)
 	res, _ := client.Do(req)
