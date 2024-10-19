@@ -1,9 +1,10 @@
-package svc
+package main
 
 import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sebasrp/deployreporter"
@@ -47,7 +48,14 @@ func setupRouter() *gin.Engine {
 
 	// Ping test
 	r.GET("/deployments", func(c *gin.Context) {
-		c.AsciiJSON(http.StatusOK, deployreporter.GetDeployments("", "", config.GrafanaKey))
+		limitDefault := 400
+		c.DefaultQuery("limit", string(limitDefault))
+		limit, err := strconv.Atoi(c.Query("limit"))
+		if err != nil {
+			fmt.Printf("error parsing query string limit. %v", err)
+			limit = limitDefault
+		}
+		c.AsciiJSON(http.StatusOK, deployreporter.GetDeployments("", "", limit, config.GrafanaKey))
 	})
 	return r
 }

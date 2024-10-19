@@ -12,6 +12,7 @@ var (
 	// Used for flags.
 	from       string
 	to         string
+	limit      int
 	cfgFile    string
 	console    bool
 	csvFlag    bool
@@ -42,6 +43,7 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&from, "from", "", "epoch datetime in milliseconds")
 	rootCmd.PersistentFlags().StringVar(&to, "to", "", "epoch datetime in milliseconds")
+	rootCmd.PersistentFlags().IntVar(&limit, "limit", 400, "maximum items to return")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.deployreporter.yaml)")
 	rootCmd.PersistentFlags().BoolVar(&console, "console", false, "output results to console")
 	rootCmd.PersistentFlags().BoolVar(&csvFlag, "csv", false, "output results to a csv file")
@@ -55,6 +57,10 @@ func init() {
 	err = viper.BindPFlag("to", rootCmd.PersistentFlags().Lookup("to"))
 	if err != nil {
 		fmt.Printf("error binding 'to' flag. %v", err)
+	}
+	err = viper.BindPFlag("limit", rootCmd.PersistentFlags().Lookup("limit"))
+	if err != nil {
+		fmt.Printf("error binding 'limit' flag. %v", err)
 	}
 	err = viper.BindPFlag("console", rootCmd.PersistentFlags().Lookup("console"))
 	if err != nil {

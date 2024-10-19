@@ -25,8 +25,9 @@ var get = &cobra.Command{
 		csvFlag := viper.GetBool("csv")
 		from := viper.GetString("from")
 		to := viper.GetString("to")
+		limit := viper.GetInt("limit")
 
-		deployments := deployreporter.GetDeployments(from, to, grafanaKey)
+		deployments := deployreporter.GetDeployments(from, to, limit, grafanaKey)
 		if viper.GetBool("verbose") {
 			for _, d := range deployments {
 				fmt.Printf("%+v\n", d)

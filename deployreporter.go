@@ -28,9 +28,9 @@ func NewDeployment(annotation checkers.Annotation) Deployment {
 	return c
 }
 
-func GetDeployments(from string, to string, grafanaKey string) (ret []Deployment) {
+func GetDeployments(from string, to string, limit int, grafanaKey string) (ret []Deployment) {
 	var deployments []Deployment
-	annotations := checkers.GetDeploymentAnnotations(from, to, grafanaKey)
+	annotations := checkers.GetDeploymentAnnotations(from, to, limit, grafanaKey)
 	for _, a := range annotations {
 		deployments = append(deployments, NewDeployment(a))
 	}

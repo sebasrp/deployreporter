@@ -31,12 +31,12 @@ type Annotation struct {
 	} `json:"data"`
 }
 
-func GetDeploymentAnnotations(from string, to string, grafanaKey string) (ret []Annotation) {
+func GetDeploymentAnnotations(from string, to string, limit int, grafanaKey string) (ret []Annotation) {
 	// see https://grafana.com/docs/grafana/latest/developers/http_api/annotations/
 	var annotations []Annotation
 
 	client := &http.Client{}
-	requestURL := fmt.Sprintf("http://deliveryhero.grafana.net/api/annotations?from=%s&to=%s&limit=%d", from, to, 400)
+	requestURL := fmt.Sprintf("http://deliveryhero.grafana.net/api/annotations?from=%s&to=%s&limit=%d", from, to, limit)
 	req, _ := http.NewRequest(http.MethodGet, requestURL, nil)
 
 	req.Header.Set("Authorization", "Bearer "+grafanaKey)
