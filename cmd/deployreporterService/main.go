@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/sebasrp/deployreporter"
 	"gopkg.in/yaml.v2"
@@ -40,6 +41,7 @@ func setupRouter() *gin.Engine {
 	fmt.Printf("config: %v", config)
 
 	r := gin.Default()
+	r.Use(cors.Default())
 
 	// Ping test
 	r.GET("/ping", func(c *gin.Context) {
@@ -50,7 +52,6 @@ func setupRouter() *gin.Engine {
 	r.GET("/deployments", func(c *gin.Context) {
 		limitDefault := 400
 		limitString := c.DefaultQuery("limit", strconv.Itoa(limitDefault))
-		fmt.Printf("current limit: %v", limitString)
 		limit, err := strconv.Atoi(limitString)
 		if err != nil {
 			fmt.Printf("error parsing query string limit: %v.\n Error: %v", limitString, err)
