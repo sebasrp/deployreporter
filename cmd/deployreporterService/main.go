@@ -49,10 +49,11 @@ func setupRouter() *gin.Engine {
 	// Ping test
 	r.GET("/deployments", func(c *gin.Context) {
 		limitDefault := 400
-		c.DefaultQuery("limit", string(limitDefault))
-		limit, err := strconv.Atoi(c.Query("limit"))
+		limitString := c.DefaultQuery("limit", strconv.Itoa(limitDefault))
+		fmt.Printf("current limit: %v", limitString)
+		limit, err := strconv.Atoi(limitString)
 		if err != nil {
-			fmt.Printf("error parsing query string limit. %v", err)
+			fmt.Printf("error parsing query string limit: %v.\n Error: %v", limitString, err)
 			limit = limitDefault
 		}
 		c.AsciiJSON(http.StatusOK, deployreporter.GetDeployments("", "", limit, config.GrafanaKey))
