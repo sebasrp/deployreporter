@@ -43,7 +43,7 @@ const getdata = async () => {
   var sourceList = new Map();
 
   data.forEach(entry => {
-      let {ID, Start, End, Service, Environment, Country, Source} = entry;
+      let {ID, Start, End, Operator, Service, Environment, Country, Source} = entry;
       var start= new Date(Start).toISOString();
       var end= new Date(End).toISOString();
       svcList.set(Service, "");
@@ -55,6 +55,7 @@ const getdata = async () => {
           <td class="d-id">${ID}</td>
           <td class="d-start">${start}</td>
           <td class="d-end">${end}</td>
+          <td class="d-operator">${Operator}</td>
           <td class="d-svc">${Service}</td>
           <td class="d-env">${Environment}</td>
           <td class="d-country">${Country}</td>
@@ -110,6 +111,7 @@ document.querySelector('#app').innerHTML = `
             <th scope="col">ID</th>
             <th scope="col">Start</th>
             <th scope="col">End</th>
+            <th scope="col">Operator</th>
             <th scope="col">
               <details class="dropdown">
                 <summary class="btn">Service</summary>
