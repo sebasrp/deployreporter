@@ -1,5 +1,8 @@
 import './style.css'
+import 'vis-timeline/dist/vis-timeline-graph2d.min.css';
 import $ from 'jquery';
+import { DataSet } from 'vis-data';
+import { Timeline} from 'vis-timeline';
 
 var data;
 
@@ -42,6 +45,8 @@ const getdata = async () => {
   var countryList = new Map();
   var sourceList = new Map();
 
+  var timelineItems = [];
+
   data.forEach(entry => {
       let {ID, Start, End, Operator, Service, Environment, Country, Source} = entry;
       var start= new Date(Start).toISOString();
@@ -61,6 +66,8 @@ const getdata = async () => {
           <td class="d-country">${Country}</td>
           <td class="d-source">${Source}</td>
       </tr>`;
+
+      timelineItems.push({id:ID, content:Service, start:Start})
   });
 
 
@@ -68,6 +75,11 @@ const getdata = async () => {
   createColumnFilterDropdownList('env-list', 'env-checkbox', 'd-env',  Array.from(environmentList.keys()));
   createColumnFilterDropdownList('country-list', 'country-checkbox', 'd-country',  Array.from(countryList.keys()));
   createColumnFilterDropdownList('source-list', 'source-checkbox', 'd-source',  Array.from(sourceList.keys()));
+
+  // Create a Timeline
+  var container = document.getElementById('timeline');
+  var timelineOptions = {height:"200px"};
+  var timeline = new Timeline(container, new DataSet(timelineItems), timelineOptions);
 };
 
 document.querySelector('#app').innerHTML = `
@@ -102,6 +114,8 @@ document.querySelector('#app').innerHTML = `
       </label>
     </div>
   </div>
+<!-- timeline -->
+  <div id="timeline"></div>
      <!-- filters -->
     <div>
       <!-- table -->
