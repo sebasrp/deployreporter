@@ -1,32 +1,77 @@
 import './style.css'
-import { setupCounter } from './counter.js'
+import $ from 'jquery';
 
+var data;
+
+function createColumnFilterDropdownList(listClass, classCheckbox, classTD, listItems){
+  var listStr = '';
+  listItems.sort().forEach(item=> {
+    listStr += `
+      <label class="label cursor-pointer">
+        <input type="checkbox" checked="checked" class="checkbox `+classCheckbox+`" value="`+ item + `"/>
+        <span class="label-text" align="left">` + item + `</span>
+      </label>
+`
+  });
+  document.getElementById(listClass).innerHTML = listStr;
+  filterColumn(classCheckbox, classTD);
+}
+
+function filterColumn(checkboxClass, tdClass){
+  $("."+checkboxClass).each(function() {$(this).on('change',function(){
+    var $this = $(this);
+    $("tbody > tr > td."+tdClass).each(function() {
+        if ($this.val()==this.innerText){
+          if($this.is(':checked')){
+            $(this).parent().show();
+          }else{
+            $(this).parent().hide();
+          }
+        }
+  });
+})});
+}
 
 const getdata = async () => {
   const endpoint = "http://localhost:8080/deployments?limit=500",
         response = await fetch(endpoint),
         data = await response.json();
 
- data.forEach(entry => {
-    let {ID, Start, End, Service, Environment, Country, Source} = entry;
-    var start= new Date(Start).toISOString();
-    var end= new Date(End).toISOString();
+  var svcList = new Map();
+  var environmentList = new Map();
+  var countryList = new Map();
+  var sourceList = new Map();
 
-    tbody.innerHTML += `<tr>
-        <td>${ID}</td>
-        <td>${start}</td>
-        <td>${end}</td>
-        <td>${Service}</td>
-        <td>${Environment}</td>
-        <td>${Country}</td>
-        <td>${Source}</td>
-    </tr>`;
- });
-}
+  data.forEach(entry => {
+      let {ID, Start, End, Service, Environment, Country, Source} = entry;
+      var start= new Date(Start).toISOString();
+      var end= new Date(End).toISOString();
+      svcList.set(Service, "");
+      environmentList.set(Environment, "");
+      countryList.set(Country, "");
+      sourceList.set(Source, "");
 
+      tbody.innerHTML += `<tr>
+          <td class="d-id">${ID}</td>
+          <td class="d-start">${start}</td>
+          <td class="d-end">${end}</td>
+          <td class="d-svc">${Service}</td>
+          <td class="d-env">${Environment}</td>
+          <td class="d-country">${Country}</td>
+          <td class="d-source">${Source}</td>
+      </tr>`;
+  });
+
+
+  createColumnFilterDropdownList('svc-list', 'svc-checkbox', 'd-svc',  Array.from(svcList.keys()));
+  createColumnFilterDropdownList('env-list', 'env-checkbox', 'd-env',  Array.from(environmentList.keys()));
+  createColumnFilterDropdownList('country-list', 'country-checkbox', 'd-country',  Array.from(countryList.keys()));
+  createColumnFilterDropdownList('source-list', 'source-checkbox', 'd-source',  Array.from(sourceList.keys()));
+};
 
 document.querySelector('#app').innerHTML = `
   <div>
+    <!-- header -->
     <div class="navbar bg-base-100">
     <div class="flex-1">
       <a class="btn btn-ghost text-xl">Deployment Tracker</a>
@@ -56,17 +101,43 @@ document.querySelector('#app').innerHTML = `
       </label>
     </div>
   </div>
-    <div class="overflow-x-auto">
-      <table class="table table-zebra">
+     <!-- filters -->
+    <div>
+      <!-- table -->
+      <table id="deployment-table" class="table table-zebra">
         <thead>
           <tr>
             <th scope="col">ID</th>
             <th scope="col">Start</th>
             <th scope="col">End</th>
-            <th scope="col">Service</th>
-            <th scope="col">Environment</th>
-            <th scope="col">Country</th>
-            <th scope="col">Source</th>
+            <th scope="col">
+              <details class="dropdown">
+                <summary class="btn">Service</summary>
+                <ul tabindex="0" id="svc-list" class="dropdown-content bg-base-100">
+                </ul>
+              </div>
+            </th>
+            <th scope="col">
+              <details class="dropdown">
+                <summary class="btn">Env</summary>
+                <ul tabindex="0" id="env-list" class="dropdown-content bg-base-100">
+                </ul>
+              </div>
+            </th>
+            <th scope="col">
+              <details class="dropdown">
+                <summary class="btn">Country</summary>
+                <ul tabindex="0" id="country-list" class="dropdown-content bg-base-100" >
+                </ul>
+              </div>
+            </th>
+            <th scope="col">
+              <details class="dropdown">
+                <summary class="btn">Source</summary>
+                <ul tabindex="0" id="source-list" class="dropdown-content bg-base-100">
+                </ul>
+              </div>
+            </th>
           </tr>
         </thead>
         <tbody id="tbody">
@@ -76,4 +147,4 @@ document.querySelector('#app').innerHTML = `
   </div>
 `
 
-getdata();
+data=getdata();
