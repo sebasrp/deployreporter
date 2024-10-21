@@ -5,19 +5,32 @@ import { DataSet } from 'vis-data';
 import { Timeline} from 'vis-timeline';
 
 var data;
+const ID_col="ID";
+const START="Start";
+const END="End";
+const OPERATOR="Operator";
+const SERVICE="Service";
+const ENV="Env";
+const COUNTRY = "Country";
+const TRIBE = "Tribe";
+const SQUAD ="Squad";
+const TIER="Tier";
+const SOURCE="Source";
 
-function createColumnFilterDropdownList(listClass, classCheckbox, classTD, listItems){
+
+function createColumnFilterDropdownList(colPrefix, listItems){
+  colPrefix = colPrefix.toLowerCase()
   var listStr = '';
   listItems.sort().forEach(item=> {
     listStr += `
       <label class="label cursor-pointer">
-        <input type="checkbox" checked="checked" class="checkbox `+classCheckbox+`" value="`+ item + `"/>
+        <input type="checkbox" checked="checked" class="checkbox checkbox-`+colPrefix+`" value="`+ item + `"/>
         <span class="label-text" align="left">` + item + `</span>
       </label>
 `
   });
-  document.getElementById(listClass).innerHTML = listStr;
-  filterColumn(classCheckbox, classTD);
+  document.getElementById('ul-'+colPrefix).innerHTML = listStr;
+  filterColumn('checkbox-'+colPrefix, 'td-'+colPrefix);
 }
 
 function filterColumn(checkboxClass, tdClass){
@@ -33,6 +46,33 @@ function filterColumn(checkboxClass, tdClass){
         }
   });
 })});
+}
+
+function setupColumns(){
+  appendFilterableColumn(ID_col);
+  appendFilterableColumn(START);
+  appendFilterableColumn(END);
+  appendFilterableColumn(OPERATOR);
+  appendFilterableColumn(SERVICE);
+  appendFilterableColumn(ENV);
+  appendFilterableColumn(COUNTRY);
+  appendFilterableColumn(TRIBE);
+  appendFilterableColumn(SQUAD);
+  appendFilterableColumn(TIER);
+  appendFilterableColumn(SOURCE);
+}
+
+function appendFilterableColumn(columnName){
+  var _html =`
+    <th scope="col">
+      <details class="dropdown">
+        <summary class="btn">`+columnName+`</summary>
+        <ul tabindex="0" id="ul-`+columnName.toLowerCase()+`" class="dropdown-content bg-base-100">
+        </ul>
+      </div>
+    </th>
+    `;
+  $('#theadbody > tr').before(_html);
 }
 
 const getdata = async () => {
@@ -63,30 +103,30 @@ const getdata = async () => {
       sourceList.set(Source, "");
 
       tbody.innerHTML += `<tr>
-          <td class="d-id">${ID}</td>
-          <td class="d-start">${start}</td>
-          <td class="d-end">${end}</td>
-          <td class="d-operator">${Operator}</td>
-          <td class="d-svc">${Service}</td>
-          <td class="d-env">${Environment}</td>
-          <td class="d-country">${Country}</td>
-          <td class="d-tribe">${Tribe}</td>
-          <td class="d-squad">${Squad}</td>
-          <td class="d-tier">${Tier}</td>
-          <td class="d-source">${Source}</td>
+          <td class="td-`+ID_col.toLowerCase()+`">${ID}</td>
+          <td class="td-`+START.toLowerCase()+`">${start}</td>
+          <td class="td-`+END.toLowerCase()+`">${end}</td>
+          <td class="td-`+OPERATOR.toLowerCase()+`">${Operator}</td>
+          <td class="td-`+SERVICE.toLowerCase()+`">${Service}</td>
+          <td class="td-`+ENV.toLowerCase()+`">${Environment}</td>
+          <td class="td-`+COUNTRY.toLowerCase()+`">${Country}</td>
+          <td class="td-`+TRIBE.toLowerCase()+`">${Tribe}</td>
+          <td class="td-`+SQUAD.toLowerCase()+`">${Squad}</td>
+          <td class="td-`+TIER.toLowerCase()+`">${Tier}</td>
+          <td class="td-`+SOURCE.toLowerCase()+`">${Source}</td>
       </tr>`;
 
       timelineItems.push({id:ID, content:Service, start:Start})
   });
 
 
-  createColumnFilterDropdownList('svc-list', 'svc-checkbox', 'd-svc',  Array.from(svcList.keys()));
-  createColumnFilterDropdownList('env-list', 'env-checkbox', 'd-env',  Array.from(environmentList.keys()));
-  createColumnFilterDropdownList('country-list', 'country-checkbox', 'd-country',  Array.from(countryList.keys()));
-  createColumnFilterDropdownList('tribe-list', 'tribe-checkbox', 'd-tribe',  Array.from(tribeList.keys()));
-  createColumnFilterDropdownList('squad-list', 'squad-checkbox', 'd-squad',  Array.from(squadList.keys()));
-  createColumnFilterDropdownList('tier-list', 'tier-checkbox', 'd-tier',  Array.from(tierList.keys()));
-  createColumnFilterDropdownList('source-list', 'source-checkbox', 'd-source',  Array.from(sourceList.keys()));
+  createColumnFilterDropdownList(SERVICE,  Array.from(svcList.keys()));
+  createColumnFilterDropdownList(ENV,  Array.from(environmentList.keys()));
+  createColumnFilterDropdownList(COUNTRY,  Array.from(countryList.keys()));
+  createColumnFilterDropdownList(TRIBE,  Array.from(tribeList.keys()));
+  createColumnFilterDropdownList(SQUAD,  Array.from(squadList.keys()));
+  createColumnFilterDropdownList(TIER,  Array.from(tierList.keys()));
+  createColumnFilterDropdownList(SOURCE,  Array.from(sourceList.keys()));
 
   // Create a Timeline
   var container = document.getElementById('timeline');
@@ -132,61 +172,8 @@ document.querySelector('#app').innerHTML = `
     <div>
       <!-- table -->
       <table id="deployment-table" class="table table-zebra">
-        <thead>
+        <thead id="theadbody">
           <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Start</th>
-            <th scope="col">End</th>
-            <th scope="col">Operator</th>
-            <th scope="col">
-              <details class="dropdown">
-                <summary class="btn">Service</summary>
-                <ul tabindex="0" id="svc-list" class="dropdown-content bg-base-100">
-                </ul>
-              </div>
-            </th>
-            <th scope="col">
-              <details class="dropdown">
-                <summary class="btn">Env</summary>
-                <ul tabindex="0" id="env-list" class="dropdown-content bg-base-100">
-                </ul>
-              </div>
-            </th>
-            <th scope="col">
-              <details class="dropdown">
-                <summary class="btn">Country</summary>
-                <ul tabindex="0" id="country-list" class="dropdown-content bg-base-100" >
-                </ul>
-              </div>
-            </th>
-            <th scope="col">
-              <details class="dropdown">
-                <summary class="btn">Tribe</summary>
-                <ul tabindex="0" id="tribe-list" class="dropdown-content bg-base-100" >
-                </ul>
-              </div>
-            </th>
-            <th scope="col">
-              <details class="dropdown">
-                <summary class="btn">Squad</summary>
-                <ul tabindex="0" id="squad-list" class="dropdown-content bg-base-100" >
-                </ul>
-              </div>
-            </th>
-            <th scope="col">
-              <details class="dropdown">
-                <summary class="btn">Tier</summary>
-                <ul tabindex="0" id="tier-list" class="dropdown-content bg-base-100" >
-                </ul>
-              </div>
-            </th>
-            <th scope="col">
-              <details class="dropdown">
-                <summary class="btn">Source</summary>
-                <ul tabindex="0" id="source-list" class="dropdown-content bg-base-100">
-                </ul>
-              </div>
-            </th>
           </tr>
         </thead>
         <tbody id="tbody">
@@ -195,5 +182,5 @@ document.querySelector('#app').innerHTML = `
     </div>
   </div>
 `
-
+setupColumns();
 data=getdata();
