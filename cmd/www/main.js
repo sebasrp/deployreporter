@@ -43,17 +43,23 @@ const getdata = async () => {
   var svcList = new Map();
   var environmentList = new Map();
   var countryList = new Map();
+  var tribeList = new Map();
+  var squadList = new Map();
+  var tierList = new Map();
   var sourceList = new Map();
 
   var timelineItems = [];
 
   data.forEach(entry => {
-      let {ID, Start, End, Operator, Service, Environment, Country, Source} = entry;
+      let {ID, Start, End, Operator, Service, Environment, Country, Tribe, Squad, Tier, Source} = entry;
       var start= new Date(Start).toISOString();
       var end= new Date(End).toISOString();
       svcList.set(Service, "");
       environmentList.set(Environment, "");
       countryList.set(Country, "");
+      tribeList.set(Tribe, "");
+      squadList.set(Squad, "");
+      tierList.set(Tier, "");
       sourceList.set(Source, "");
 
       tbody.innerHTML += `<tr>
@@ -64,6 +70,9 @@ const getdata = async () => {
           <td class="d-svc">${Service}</td>
           <td class="d-env">${Environment}</td>
           <td class="d-country">${Country}</td>
+          <td class="d-tribe">${Tribe}</td>
+          <td class="d-squad">${Squad}</td>
+          <td class="d-tier">${Tier}</td>
           <td class="d-source">${Source}</td>
       </tr>`;
 
@@ -74,6 +83,9 @@ const getdata = async () => {
   createColumnFilterDropdownList('svc-list', 'svc-checkbox', 'd-svc',  Array.from(svcList.keys()));
   createColumnFilterDropdownList('env-list', 'env-checkbox', 'd-env',  Array.from(environmentList.keys()));
   createColumnFilterDropdownList('country-list', 'country-checkbox', 'd-country',  Array.from(countryList.keys()));
+  createColumnFilterDropdownList('tribe-list', 'tribe-checkbox', 'd-tribe',  Array.from(tribeList.keys()));
+  createColumnFilterDropdownList('squad-list', 'squad-checkbox', 'd-squad',  Array.from(squadList.keys()));
+  createColumnFilterDropdownList('tier-list', 'tier-checkbox', 'd-tier',  Array.from(tierList.keys()));
   createColumnFilterDropdownList('source-list', 'source-checkbox', 'd-source',  Array.from(sourceList.keys()));
 
   // Create a Timeline
@@ -144,6 +156,27 @@ document.querySelector('#app').innerHTML = `
               <details class="dropdown">
                 <summary class="btn">Country</summary>
                 <ul tabindex="0" id="country-list" class="dropdown-content bg-base-100" >
+                </ul>
+              </div>
+            </th>
+            <th scope="col">
+              <details class="dropdown">
+                <summary class="btn">Tribe</summary>
+                <ul tabindex="0" id="tribe-list" class="dropdown-content bg-base-100" >
+                </ul>
+              </div>
+            </th>
+            <th scope="col">
+              <details class="dropdown">
+                <summary class="btn">Squad</summary>
+                <ul tabindex="0" id="squad-list" class="dropdown-content bg-base-100" >
+                </ul>
+              </div>
+            </th>
+            <th scope="col">
+              <details class="dropdown">
+                <summary class="btn">Tier</summary>
+                <ul tabindex="0" id="tier-list" class="dropdown-content bg-base-100" >
                 </ul>
               </div>
             </th>

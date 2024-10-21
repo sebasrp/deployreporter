@@ -41,9 +41,9 @@ var get = &cobra.Command{
 			}
 			csvwriter := csv.NewWriter(csvfile)
 
-			_ = csvwriter.Write([]string{"id", "start", "end", "operator", "service", "environment", "country", "source"})
+			_ = csvwriter.Write([]string{"id", "start", "end", "operator", "service", "environment", "country", "tribe", "squad", "tier", "source"})
 			for _, d := range deployments {
-				row := []string{strconv.Itoa(d.ID), time.Unix(d.Start/1000, 0).UTC().String(), time.Unix(d.End/1000, 0).UTC().String(), d.Operator, d.Service, d.Environment, d.Country, d.Source}
+				row := []string{strconv.Itoa(d.ID), time.Unix(d.Start/1000, 0).UTC().String(), time.Unix(d.End/1000, 0).UTC().String(), d.Operator, d.Service, d.Environment, d.Country, d.Tribe, d.Squad, d.Tier, d.Source}
 				_ = csvwriter.Write(row)
 			}
 			csvwriter.Flush()
