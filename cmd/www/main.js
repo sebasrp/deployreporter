@@ -52,10 +52,10 @@ function setupColumns(){
   appendFilterableColumn(ID_col);
   appendFilterableColumn(START);
   appendFilterableColumn(END);
-  appendFilterableColumn(OPERATOR);
   appendFilterableColumn(SERVICE);
   appendFilterableColumn(ENV);
   appendFilterableColumn(COUNTRY);
+  appendFilterableColumn(OPERATOR);
   appendFilterableColumn(TRIBE);
   appendFilterableColumn(SQUAD);
   appendFilterableColumn(TIER);
@@ -106,10 +106,10 @@ const getdata = async () => {
           <td class="td-`+ID_col.toLowerCase()+`">${ID}</td>
           <td class="td-`+START.toLowerCase()+`">${start}</td>
           <td class="td-`+END.toLowerCase()+`">${end}</td>
-          <td class="td-`+OPERATOR.toLowerCase()+`">${Operator}</td>
           <td class="td-`+SERVICE.toLowerCase()+`">${Service}</td>
           <td class="td-`+ENV.toLowerCase()+`">${Environment}</td>
           <td class="td-`+COUNTRY.toLowerCase()+`">${Country}</td>
+          <td class="td-`+OPERATOR.toLowerCase()+`">${Operator}</td>
           <td class="td-`+TRIBE.toLowerCase()+`">${Tribe}</td>
           <td class="td-`+SQUAD.toLowerCase()+`">${Squad}</td>
           <td class="td-`+TIER.toLowerCase()+`">${Tier}</td>
